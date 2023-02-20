@@ -7,4 +7,6 @@
 
 #define MAXBUF 256
 
+void doDSH(char* path);
+
 // TODO: Your function prototypes below
