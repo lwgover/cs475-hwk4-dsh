@@ -1,8 +1,8 @@
 /*
  * main.c
  *
- *  Created on: Mar 17 2017
- *      Author: david
+ *  Created on: Feb 20
+ *      Author: Lucas Gover
  */
 
 #include <stdio.h>
@@ -44,7 +44,7 @@ int main(int argc, char **argv){
 		printf("dsh> ");
 		fgets(line, MAXBUF, stdin);  // reads up to 256 characters into the buffer
 		cleanUpInput(line);
-		if(!strcmp(line,"exit")){break;}
+		if(!strcmp(line,"exit")) break;
 		doDSH(line);
 	}
 	free(line);

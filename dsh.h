@@ -1,12 +1,12 @@
 /*
  * dsh.h
  *
- *  Created on: Aug 2, 2013
- *      Author: chiu
+ *  Created on: feb 20, 2022
+ *      Author: Lucas Gover
  */
 
 #define MAXBUF 256
 
 void doDSH(char* path);
-
-// TODO: Your function prototypes below
+char** split(char* line,char* splitToken);
+char** splitWithSize(char* line,char* splitToken,int* size);
