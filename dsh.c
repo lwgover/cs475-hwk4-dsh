@@ -42,14 +42,14 @@ char** split(char* line, char* splitChar){
 */
 char** splitWithSize(char* line, char* splitChar,int* size){
     int numParts = 1;
-    char linecpy[strlen(line)];
+    char linecpy[strlen(line)]; // to copy line into
     strcpy(linecpy,line);
     strtok(linecpy,splitChar);
-    while(strtok(NULL,splitChar)) numParts++;
-    *size= numParts;
-    char** parts = (char**) calloc(numParts,sizeof(char*));
+    while(strtok(NULL,splitChar)) numParts++; // get number of pieces strtok will make
+    *size= numParts;//set size
+    char** parts = (char**) calloc(numParts,sizeof(char*)); // allocate mem for parts
     parts[0] = strtok(line,splitChar);
-    for(int i = 1; i < numParts; i++) parts[i] = strtok(NULL,splitChar);
+    for(int i = 1; i < numParts; i++) parts[i] = strtok(NULL,splitChar); //set parts to the token
     return parts;
 }
 /**
@@ -85,33 +85,34 @@ void modeOne(char* cmdline){
  * @param cmdline - command you wanna run
 */
 void modeTwo(char* cmdline){
-    char* originalCmdline =(char*) malloc(strlen(cmdline)+1);
+    char* originalCmdline =(char*) malloc(strlen(cmdline)+1); //to copy command line
     strcpy(originalCmdline, cmdline);
     char home[256];
-    if (getcwd(home, sizeof(home)) == NULL){
-        printf("\033[31mgetcwd() error. Sorry!\033[0m\n");
+    if (getcwd(home, sizeof(home)) == NULL){ // get current working directory
+        printf("\033[31mgetcwd() error. Sorry!\033[0m\n"); //if directory couldn't be found
         return;
     }
     if (access(strtok(cmdline," "), F_OK | X_OK) == 0){
-        cmdline[strlen(cmdline)] = ' ';
+        cmdline[strlen(cmdline)] = ' '; // undo the strtok
         modeOne(cmdline);
         return;
     }
-    char PATH[strlen(getenv("PATH"))];
-    strcpy(PATH,getenv("PATH"));
-    int* size = (int*) malloc(sizeof(int));
-    char** splitPath = splitWithSize(PATH,":",size);
-    char* fullPath = (char*) calloc(MAXBUF*2,sizeof(char));
+    char PATH[strlen(getenv("PATH"))]; // gets path
+    strcpy(PATH,getenv("PATH")); 
+
+    int* size = (int*) malloc(sizeof(int)); //creates size
+    char** splitPath = splitWithSize(PATH,":",size); // split path into lots of chars
+    char* fullPath = (char*) calloc(MAXBUF*2,sizeof(char)); // 
     for(int i = 0; i < *size; i++){
-        strcpy(fullPath,splitPath[i]);
+        strcpy(fullPath,splitPath[i]); // splitPath[i]/cmdline
         strcat(fullPath,"/");
         strcat(fullPath,cmdline);
         if(access(fullPath, F_OK | X_OK) == 0){
-            strcpy(fullPath,splitPath[i]);
+            strcpy(fullPath,splitPath[i]); 
             strcat(fullPath,"/");
-            strcat(fullPath,originalCmdline);
+            strcat(fullPath,originalCmdline); // add back in args
             modeOne(fullPath);
-            free(size); free(fullPath);free(splitPath);free(originalCmdline);
+            free(size); free(fullPath);free(splitPath);free(originalCmdline); // obligatory free statements
             return;
         }
     }
@@ -127,7 +128,7 @@ void modeTwo(char* cmdline){
 */
 void doDSH(char* cmdline){
     char* command = strtok(cmdline, " ");
-    if(!strcmp(command,"cd")){
+    if(0 == strcmp(command,"cd")){ // cd
         char* dir = strtok(NULL," ");
         if(strcmp(dir,"~") == 0) dir = getenv("HOME");
         if(chdir(dir) != 0) printf("\033[31m%s: No such file or directory\033[0m\n",dir);
@@ -135,7 +136,7 @@ void doDSH(char* cmdline){
     }
     char wd[MAXBUF];
     if (getcwd(wd, sizeof(wd)) == NULL) printf("\033[31mgetcwd() error. Sorry!\033[0m\n");
-    if(!strcmp(command,"pwd")){
+    if(!strcmp(command,"pwd")){ // pwd
         printf("%s\n",wd);
         return;
     }
